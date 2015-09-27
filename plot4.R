@@ -1,0 +1,13 @@
+file = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
+temp <- tempfile()
+download.file(file,temp)
+NEI <- readRDS(unz(temp,"summarySCC_PM25.rds"))
+SCC <- readRDS(unz(temp, "Source_Classification_Code.rds"))
+unlink(temp)
+library(dplyr)
+sum_year = NEI %>% filter(., SCC <= 10300309 & SCC >= 10100101) %>% group_by(., year) %>% summarize(., sumPH25 = sum(Emissions))
+plot(sum_year)
+lines(sum_year)
+title(main="Coal-related pollution PM25 by year")  
+dev.copy(png, file = "plot4.png")  
+dev.off()  
